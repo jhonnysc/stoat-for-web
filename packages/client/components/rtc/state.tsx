@@ -84,6 +84,9 @@ class Voice {
   layout: Accessor<VoiceLayout>;
   #setLayout: Setter<VoiceLayout>;
 
+  streamOnly: Accessor<boolean>;
+  #setStreamOnly: Setter<boolean>;
+
   focusId: Accessor<string | undefined>;
   #setFocus: Setter<string | undefined>;
 
@@ -137,6 +140,10 @@ class Voice {
     const [layout, setLayout] = createSignal<VoiceLayout>();
     this.layout = layout;
     this.#setLayout = setLayout;
+
+    const [streamOnly, setStreamOnly] = createSignal(false);
+    this.streamOnly = streamOnly;
+    this.#setStreamOnly = setStreamOnly;
 
     const [focus, setFocus] = createSignal<string>();
     this.focusId = focus;
@@ -342,6 +349,7 @@ class Voice {
         this.#setRoom();
         this.#setChannel();
         this.#setLayout();
+        this.#setStreamOnly(false);
         this.vidTracks = () => [];
       });
 
@@ -639,6 +647,11 @@ class Voice {
 
   toggleLayout(type: VoiceLayout) {
     this.#setLayout((l) => (l === type ? undefined : type));
+  }
+
+  /** Toggle the stream-only voice call layout. */
+  toggleStreamOnly() {
+    this.#setStreamOnly((value) => !value);
   }
 
   trackId(t: TrackReferenceOrPlaceholder) {

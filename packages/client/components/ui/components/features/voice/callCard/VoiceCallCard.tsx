@@ -114,7 +114,7 @@ export function VoiceCallCardContext(props: { children: JSX.Element }) {
       sty.height = "";
       setMode();
     } else if (
-      voice.layout() === "expanded" &&
+      (voice.layout() === "expanded" || voice.streamOnly()) &&
       inf?.parentRect &&
       (!inf.drawer || inf.drawer === SlideState.SHOWN)
     ) {
@@ -195,6 +195,7 @@ export function VoiceCallCardContext(props: { children: JSX.Element }) {
                 inCall={inCall()}
                 showCard={voice.showCard(channel()!)}
                 layout={voice.layout()}
+                streamOnly={voice.streamOnly()}
               />
             </Match>
           </Switch>
@@ -287,10 +288,11 @@ function VoiceCallCard(props: {
   inCall: boolean;
   showCard: boolean;
   layout: VoiceLayout;
+  streamOnly: boolean;
 }) {
   return (
     <Show when={props.showCard}>
-      <Base layout={props.layout as never}>
+      <Base layout={props.layout as never} streamOnly={props.streamOnly}>
         <Card active={props.inCall} layout={props.layout}>
           <Show
             when={props.inCall}
@@ -324,6 +326,13 @@ const Base = styled("div", {
     transition: "all var(--transitions-medium)",
   },
   variants: {
+    streamOnly: {
+      true: {
+        top: 0,
+        height: "100%",
+        padding: 0,
+      },
+    },
     layout: {
       fullscreen: {
         top: 0,

@@ -83,6 +83,21 @@ function LayoutButtons() {
       </Show>
       <IconButton
         size="sm"
+        variant="standard"
+        onPress={() => voice.toggleStreamOnly()}
+        use:floating={{
+          tooltip: {
+            placement: "top",
+            content: voice.streamOnly() ? t`Show chat` : t`Show only stream`,
+          },
+        }}
+      >
+        <Show when={voice.streamOnly()} fallback={<Symbol>chat</Symbol>}>
+          <Symbol>hide_source</Symbol>
+        </Show>
+      </IconButton>
+      <IconButton
+        size="sm"
         variant={"standard"}
         onPress={() => voice.toggleLayout("fullscreen")}
       >
