@@ -166,10 +166,11 @@ const base = cva({
       alignSelf: "center",
     },
 
-    // swap `.hover-hide` elements w/  `.hover-show` elements on hover
-    "&:hover .hover-hide, &:not(:hover) .hover-show": {
-      display: "none",
-    },
+    // swap `.hover-hide` elements w/  `.hover-show` elements on hover or keyboard focus
+    "&:hover .hover-hide, &:focus-within .hover-hide, &:not(:hover):not(:focus-within) .hover-show":
+      {
+        display: "none",
+      },
   },
   variants: {
     size: {
