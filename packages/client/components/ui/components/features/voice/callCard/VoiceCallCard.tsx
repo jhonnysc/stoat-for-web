@@ -23,7 +23,6 @@ import { SlideState } from "@revolt/ui/components/navigation/SlideDrawer";
 
 import { VoiceCallCardActiveRoom } from "./VoiceCallCardActiveRoom";
 import { VoiceCallCardPiP } from "./VoiceCallCardPiP";
-import { VoiceCallCardPreview } from "./VoiceCallCardPreview";
 
 type Mode = "floating" | "moving";
 type FloatType = "tl" | "tr" | "bl" | "br";
@@ -291,15 +290,10 @@ function VoiceCallCard(props: {
   streamOnly: boolean;
 }) {
   return (
-    <Show when={props.showCard}>
+    <Show when={props.showCard && props.inCall}>
       <Base layout={props.layout as never} streamOnly={props.streamOnly}>
         <Card active={props.inCall} layout={props.layout}>
-          <Show
-            when={props.inCall}
-            fallback={<VoiceCallCardPreview channel={props.channel} />}
-          >
-            <VoiceCallCardActiveRoom />
-          </Show>
+          <VoiceCallCardActiveRoom />
         </Card>
       </Base>
     </Show>

@@ -460,6 +460,8 @@ function Entry(
   const voice = useVoice();
   const { openModal } = useModals();
   const { isMobile } = useDevice();
+  const { t } = useLingui();
+  const navigate = useNavigate();
 
   const canEditChannel = createMemo(() =>
     (["ManageChannel", "ManagePermissions", "ManageWebhooks"] as const).some(
@@ -500,6 +502,15 @@ function Entry(
         size="normal"
         alert={alertState()}
         attention={attentionState()}
+        onClick={() => {
+          if (
+            props.channel.isVoice &&
+            !inCall() &&
+            props.channel.havePermission("Connect")
+          ) {
+            voice.connect(props.channel);
+          }
+        }}
         icon={
           <>
             <Switch fallback={<Symbol>grid_3x3</Symbol>}>
@@ -520,45 +531,67 @@ function Entry(
           </>
         }
         actions={
-          <Show when={!isMobile}>
-            <Show when={canInvite()}>
+          <>
+            <Show when={props.channel.isVoice}>
               <a
+                href={`/server/${props.channel.serverId}/channel/${props.channel.id}`}
+                aria-label={t`Open Chat`}
                 use:floating={{
-                  tooltip: { placement: "top", content: "Create Invite" },
+                  tooltip: { placement: "top", content: t`Open Chat` },
                 }}
                 onClick={(e) => {
                   e.preventDefault();
-                  openModal({
-                    type: "create_invite",
-                    channel: props.channel,
-                  });
+                  e.stopPropagation();
+                  navigate(
+                    `/server/${props.channel.serverId}/channel/${props.channel.id}`,
+                  );
                 }}
               >
                 <Symbol size={16} fill>
-                  person_add
+                  chat_bubble
                 </Symbol>
               </a>
             </Show>
-            <Show when={canEditChannel()}>
-              <a
-                use:floating={{
-                  tooltip: { placement: "top", content: "Edit Channel" },
-                }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  openModal({
-                    type: "settings",
-                    config: "channel",
-                    context: props.channel,
-                  });
-                }}
-              >
-                <Symbol size={16} fill>
-                  settings
-                </Symbol>
-              </a>
+            <Show when={!isMobile}>
+              <Show when={canInvite()}>
+                <a
+                  use:floating={{
+                    tooltip: { placement: "top", content: "Create Invite" },
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    openModal({
+                      type: "create_invite",
+                      channel: props.channel,
+                    });
+                  }}
+                >
+                  <Symbol size={16} fill>
+                    person_add
+                  </Symbol>
+                </a>
+              </Show>
+              <Show when={canEditChannel()}>
+                <a
+                  use:floating={{
+                    tooltip: { placement: "top", content: "Edit Channel" },
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    openModal({
+                      type: "settings",
+                      config: "channel",
+                      context: props.channel,
+                    });
+                  }}
+                >
+                  <Symbol size={16} fill>
+                    settings
+                  </Symbol>
+                </a>
+              </Show>
             </Show>
-          </Show>
+          </>
         }
       >
         <OverflowingText>
